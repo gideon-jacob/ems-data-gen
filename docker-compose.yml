@@ -6,3 +6,5 @@ services:
     env_file:
       - .env
     restart: always
+    volumes:
+      - ./data.csv:/app/data.csv
