@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Create start script to run both processes concurrently
-RUN echo '#!/bin/bash\npython data_gen.py &\npython cloud_worker.py' > /app/start.sh && chmod +x /app/start.sh
+RUN echo '#!/bin/bash\npython src/data_gen.py &\npython src/cloud_worker.py' > /app/start.sh && chmod +x /app/start.sh
 
 # Run the start script when the container launches
 CMD ["/app/start.sh"]
