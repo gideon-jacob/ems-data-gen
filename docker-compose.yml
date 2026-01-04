@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  ems-app:
+    build: .
+    env_file:
+      - .env
+    restart: always
