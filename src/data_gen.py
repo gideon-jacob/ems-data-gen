@@ -4,7 +4,7 @@ from time import sleep
 import os
 import csv
 
-ROOMS = [f"Room {i}" for i in range(1, 7)]
+ROOMS = [(f"Room {i}", 'type-A5') for i in range(1, 7)]
 SAMPLES_PER_ROOM = 1
 
 def generate_reading():
@@ -53,13 +53,16 @@ def generate_reading():
 
 def generate_room_data(num_samples):
     # create slightly staggered timestamps for readability
-    base = datetime.utcnow()
+    base = datetime.now()
     return [
         {**generate_reading(), "timestamp": (base + timedelta(seconds=i)).isoformat() + "Z"}
         for i in range(num_samples)
     ]
 
 def main():
+    print("Info: Data Simulation Started ...")
+    print("Saving data in csv file ...")
+    
     while True:
         filename = "data.csv"
         need_header = (not os.path.exists(filename)) or (os.path.getsize(filename) == 0)
@@ -69,8 +72,11 @@ def main():
             for room in ROOMS:
                 readings = generate_room_data(SAMPLES_PER_ROOM)
                 for r in readings:
-                    writer.writerow([room, r["timestamp"], r["temperature_c"], r["humidity_pct"], r["differential_pressure_pa"]])
+                    writer.writerow([room[0], room[1], r["timestamp"], r["temperature_c"], r["humidity_pct"], r["differential_pressure_pa"]])
         sleep(1)  # simulate delay between room reading
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nInfo: Data Simulation Stopped.")

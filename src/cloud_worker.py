@@ -3,6 +3,7 @@ import time
 import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
+from datetime import datetime
 
 # Load environment variables
 load_dotenv()
@@ -43,15 +44,16 @@ def main():
                 if row[0] == "room": continue # Skip header
 
                 # Print as requested
-                print(row)
+                # print(row)
 
                 try:
                     record = {
                         "room_id": row[0],
-                        "timestamp": row[1],
-                        "temperature_c": float(row[2]),
-                        "humidity_pct": float(row[3]),
-                        "differential_pressure_pa": float(row[4]),
+                        "room_type": row[1],
+                        "recorded_time": row[2],
+                        "temperature_c": float(row[3]),
+                        "humidity_pct": float(row[4]),
+                        "differential_pressure_pa": float(row[5]),
                     }
                     data_to_insert.append(record)
                 except (ValueError, IndexError) as e:
@@ -59,10 +61,10 @@ def main():
 
             if data_to_insert:
                 try:
-                    supabase.table("readings").insert(data_to_insert).execute()
-                    print(f"Sent {len(data_to_insert)} records to Supabase.")
+                    supabase.table("readings_v2").insert(data_to_insert).execute()
+                    print(f"{datetime.now().replace(microsecond=0)} - Sent {len(data_to_insert)} records to Cloud Database.")
                 except Exception as e:
-                    print(f"Error sending to Supabase: {e}")
+                    print(f"Error sending to Cloud Database: {e}")
         
         time.sleep(5)
 
