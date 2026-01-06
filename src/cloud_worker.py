@@ -1,6 +1,7 @@
 import csv
 import time
 import os
+import requests
 from dotenv import load_dotenv
 from supabase import create_client, Client
 from datetime import datetime
@@ -10,6 +11,7 @@ load_dotenv()
 
 url = os.environ.get("SUPABASE_URL")
 key = os.environ.get("SUPABASE_KEY")
+trigger_url = os.environ.get("TRIGGER_URL")
 
 if not url or not key:
     print("Error: SUPABASE_URL and SUPABASE_KEY must be set in .env file")
@@ -63,6 +65,12 @@ def main():
                 try:
                     supabase.table("readings_v2").insert(data_to_insert).execute()
                     print(f"{datetime.now().replace(microsecond=0)} - Sent {len(data_to_insert)} records to Cloud Database.")
+                    
+                    if trigger_url:
+                        try:
+                            requests.post(trigger_url)
+                        except Exception as e:
+                            pass
                 except Exception as e:
                     print(f"Error sending to Cloud Database: {e}")
         
